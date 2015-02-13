@@ -1,0 +1,87 @@
+<?php
+/*
+ *  Shopix_AddToCartMatrix - Magento Add to Cart Matrix
+ *  Copyright (C) 2015 Shopix Pty Ltd (http://www.shopix.com.au)
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as
+ *  published by the Free Software Foundation, either version 3 of the
+ *  License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+$_useSwatches = Mage::helper('core')->isModuleEnabled('configurableswatches');
+if ($_useSwatches) {
+    $dimHelper = Mage::helper('configurableswatches/swatchdimensions');
+    $_swatchInnerWidth = $dimHelper->getInnerWidth(Mage_ConfigurableSwatches_Helper_Swatchdimensions::AREA_DETAIL);
+    $_swatchInnerHeight = $dimHelper->getInnerHeight(Mage_ConfigurableSwatches_Helper_Swatchdimensions::AREA_DETAIL);
+}
+?>
+<?php $matrix = $this->getProductMatrixData(); ?>
+<?php if ($matrix->hasRows()): ?>
+    <form id="shopix_addtocartmatrix_addalltocart_form" class="shopix-addtocartmatrix" action="<?php echo $this->getUrl('shopix_addtocartmatrix/cart/addAll') ?>" method="POST">
+        <?php echo $this->getBlockHtml('formkey');?>
+        <input name="shopix_addtocartmatrix_product[configurable]" type="hidden" value="<?php echo $this->getProduct()->getId() ?>" />
+        <table class="shopix-addtocartmatrix-table">
+            <thead>
+                    <th class="shopix-addtocartmatrix-primary-header"><!-- Secondary name --></th>
+                <?php foreach ($matrix->getPrimaryHeader()->getValues() as $header): ?>
+                    <th class="shopix-addtocartmatrix-primary-header"><?php echo $header['label'] ?></th>
+                <?php endforeach ?>
+            </thead>
+            <tbody>
+                <?php $even = 1 ?>
+                <?php foreach ($matrix->getRows() as $row): ?>
+                <tr class="shopix-addtocartmatrix-row <?php echo ($even++ % 2) ? 'even' : 'odd' ?>">
+                        <td class="shopix-addtocartmatrix-secondary-header">
+                            <?php
+                            if ($_useSwatches):
+                                $row_header = $row->getHeader();
+                                $_swatchUrl = Mage::helper('configurableswatches/productimg')->getSwatchUrl($this->getProduct(), $row_header['label'], $_swatchInnerWidth, $_swatchInnerHeight, $_swatchType);
+                                if (!empty($_swatchUrl)):
+                                ?>
+                                    <div class="shopix-addtocartmatrix-secondary-header-swatch"><img src="<?php echo $_swatchUrl; ?>" alt="<?php echo $row_header['label'] ?>" width="<?php echo $_swatchInnerWidth ?>" height="<?php echo $_swatchInnerHeight ?>" /></div>
+                                <?php endif ?>
+                            <?php endif ?>
+                            <div class="shopix-addtocartmatrix-secondary-header-label"><?php echo $row->getHeader()->getLabel() ?></div>
+                        </td>
+                    <?php foreach ($row->getCells() as $cell): ?>
+                        <?php $disabled = $cell->getIsDisabled() ? 'disabled="disabled"' : ''; ?>
+                        <td class="shopix-addtocartmatrix-cell <?php echo $cell->getIsDisabled() ? 'disabled' : '' ?>">
+                            <div class="shopix-addtocartmatrix-stock"><?php echo $cell->getStockLevelLabel(); ?></div>
+                            <div class="shopix-addtocartmatrix-qty"><input class="validate-digits" <?php if (! $cell->getIsDisabled()): ?>name="shopix_addtocartmatrix_product[<?php echo $cell->getProduct()->getId() ?>][qty]"<?php endif ?> type="text" maxlength="5" <?php echo $disabled ?> /></div>
+                            <?php if (! $cell->getIsDisabled()): ?>
+                                <?php foreach ($cell->getSuperAttributes() as $attr): ?>
+                                    <input name="shopix_addtocartmatrix_product[<?php echo $cell->getProduct()->getId() ?>][attr][<?php echo $attr->getName() ?>]" type="hidden" value="<?php echo $attr->getValue() ?>" />
+                                <?php endforeach ?>
+                            <?php endif ?>
+                        </td>
+                    <?php endforeach ?>
+                    </tr>
+                <?php endforeach ?>
+            </tbody>
+            <tfoot>
+                <th class="shopix-addtocartmatrix-primary-header"><!-- Secondary name --></th>
+                <?php foreach ($matrix->getPrimaryHeader()->getValues() as $header): ?>
+                    <th class="shopix-addtocartmatrix-primary-header"><?php echo $header['label'] ?></th>
+                <?php endforeach ?>
+            </tfoot>
+        </table>
+
+        <div class="shopix-adtocartmatrix-addalltocart">
+            <button onclick="shopixAddToCartMatrixAddAllToCartForm.submit(this)" class="button btn-cart" id="shopix-addtocartmatrix-addalltocart-button" title="<?php echo $this->__('Add All to Cart') ?>" type="button"><span><span><?php echo $this->__('Add All to Cart') ?></span></span></button>
+        </div>
+    </form>
+
+    <script type="text/javascript">
+        var shopixAddToCartMatrixAddAllToCartForm = new VarienForm('shopix_addtocartmatrix_addalltocart_form');
+    </script>
+<?php endif ?>
+

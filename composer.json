@@ -1,0 +1,24 @@
+{
+    "name": "shopix/addtocartmatrix",
+    "type": "magento-module",
+    "license": "GNU AFFERO",
+    "homepage": "https://github.com/shopixco/magento-add-to-cart-matrix",
+    "description": "Magento Add to Cart Matrix",
+    "authors": [
+	{
+	    "name": "Jan Tomka",
+	    "email": "jan@shopix.com.au",
+	}
+    ],
+    "require": {
+	"magento-hackathon/magento-composer-installer": "*"
+    },
+    "extra": {
+	"map": [
+	    ["app/code/community/Shopix/AddToCartMatrix", "app/code/community/Shopix/AddToCartMatrix"],
+	    ["app/design/frontend/base/default", "app/design/frontend/base/default"],
+	    ["skin/frontend/base/default", "skin/frontend/base/default"],
+	    ["app/etc/modules/Shopix_AddToCartMatrix.xml", "app/etc/modules/Shopix_AddToCartMatrix.xml"]
+	]
+    }
+}

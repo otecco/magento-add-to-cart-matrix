@@ -1,0 +1,5 @@
+app/code/community/Shopix/AddToCartMatrix app/code/community/Shopix/AddToCartMatrix
+app/design/frontend/base/default/layout/shopix_addtocartmatrix.xml app/design/frontend/base/default/layout/shopix_addtocartmatrix.xml
+app/design/frontend/base/default/template/shopix_addtocartmatrix app/design/frontend/base/default/template/shopix_addtocartmatrix
+skin/frontend/base/default/css/shopix_addtocartmatrix.css skin/frontend/base/default/css/shopix_addtocartmatrix.css
+app/etc/modules/Shopix_AddToCartMatrix.xml app/etc/modules/Shopix_AddToCartMatrix.xml
